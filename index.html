@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bangkok · May 28–June 8</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#f2f2f7; color:#1c1c1e; height:100dvh; display:flex; flex-direction:column; overflow:hidden; }
+header { background:#fff; border-bottom:1px solid #e5e5ea; padding:10px 14px 8px; flex-shrink:0; }
+.htop { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+h1 { font-size:16px; font-weight:700; color:#1c1c1e; }
+h1 span { color:#c9a84c; }
+.sub { font-size:11px; color:#8e8e93; margin-left:auto; }
+.filters { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; }
+.filters::-webkit-scrollbar { display:none; }
+.fb { padding:5px 12px; border-radius:16px; border:1px solid #ddd; background:#fff; color:#555; font-size:12px; font-family:inherit; cursor:pointer; white-space:nowrap; flex-shrink:0; transition:all 0.15s; }
+.fb.on { background:#1c1c1e; color:#fff; border-color:#1c1c1e; }
+.body { display:flex; flex:1; overflow:hidden; }
+#map { flex:1; }
+.sidebar { width:320px; flex-shrink:0; background:#fff; border-left:1px solid #e5e5ea; display:flex; flex-direction:column; overflow:hidden; order:2; }
+.sw { padding:10px 12px; border-bottom:1px solid #f2f2f7; flex-shrink:0; }
+.sw input { width:100%; background:#f2f2f7; border:none; border-radius:10px; padding:8px 12px; color:#1c1c1e; font-size:14px; font-family:inherit; outline:none; }
+.sw input::placeholder { color:#aeaeb2; }
+.meta { padding:6px 14px; font-size:11px; color:#aeaeb2; border-bottom:1px solid #f2f2f7; flex-shrink:0; }
+.cards { overflow-y:auto; flex:1; padding:8px; -webkit-overflow-scrolling:touch; }
+.cards::-webkit-scrollbar { width:3px; }
+.cards::-webkit-scrollbar-thumb { background:#d1d1d6; border-radius:2px; }
+.card { background:#fff; border:1px solid #e5e5ea; border-radius:12px; padding:12px; margin-bottom:6px; cursor:pointer; transition:border-color 0.15s; }
+.card:hover { border-color:#c7c7cc; }
+.card.sel { border-color:#c9a84c; background:#fffdf5; }
+.card.p { border-left:3px solid #c9a84c; }
+.card.hotel-card { background:linear-gradient(135deg,#fffbf0,#fff8e6); border:2px solid #c9a84c; }
+.hotel-badge { display:inline-flex; align-items:center; gap:4px; font-size:10px; background:#c9a84c; color:#fff; padding:2px 8px; border-radius:10px; margin-bottom:6px; font-weight:600; }
+.crow { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:5px; }
+.cname { font-size:13px; font-weight:600; color:#1c1c1e; line-height:1.35; }
+.must { font-size:10px; color:#c9a84c; white-space:nowrap; flex-shrink:0; }
+.ctag { display:inline-block; font-size:10px; padding:2px 9px; border-radius:10px; margin-bottom:6px; font-weight:500; }
+.cdesc { font-size:12px; color:#6d6d72; line-height:1.6; margin-bottom:8px; }
+.cgmap { font-size:11px; color:#c9a84c; text-decoration:none; font-weight:500; }
+.ptoggle { flex-shrink:0; border-top:1px solid #e5e5ea; }
+.pbtn { width:100%; padding:11px 14px; background:#fff; border:none; color:#8e8e93; font-size:12px; font-family:inherit; cursor:pointer; text-align:left; display:flex; justify-content:space-between; }
+.pbody { display:none; overflow-y:auto; max-height:260px; background:#fafafa; padding:10px 14px 14px; }
+.pbody.open { display:block; }
+.pi { margin-bottom:12px; }
+.pi h4 { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:#c9a84c; margin-bottom:5px; }
+.pi li { font-size:12px; color:#6d6d72; line-height:1.7; list-style:none; }
+.pi li b { color:#1c1c1e; font-weight:600; }
+.gpopup { font-family:-apple-system,sans-serif; max-width:240px; }
+.gpopup .pname { font-size:14px; font-weight:700; color:#1c1c1e; margin-bottom:2px; }
+.gpopup .pcat { font-size:11px; margin-bottom:6px; }
+.gpopup .pdesc { font-size:12px; color:#6d6d72; line-height:1.55; margin-bottom:8px; }
+.gpopup .plink { font-size:12px; color:#c9a84c; text-decoration:none; font-weight:600; }
+.empty { text-align:center; padding:40px 16px; color:#aeaeb2; font-size:13px; }
+@media (max-width:640px) {
+  .body { flex-direction:column; }
+  #map { height:42dvh; flex:none; order:1; }
+  .sidebar { width:100%; border-left:none; border-top:1px solid #e5e5ea; flex:1; order:2; }
+  .pbody { max-height:180px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="htop">
+    <h1>Bangkok <span>&#9670;</span> May 28&ndash;June 8</h1>
+    <span class="sub" id="sub"></span>
+  </div>
+  <div class="filters" id="filters"></div>
+</header>
+<div class="body">
+  <div id="map"></div>
+  <div class="sidebar">
+    <div class="sw"><input id="q" type="search" placeholder="Search..." autocomplete="off"></div>
+    <div class="meta" id="meta"></div>
+    <div class="cards" id="cards"></div>
+    <div class="ptoggle">
+      <button class="pbtn" onclick="toggleP()"><span>&#9432; Practical info</span><span id="parr">&#9658;</span></button>
+      <div class="pbody" id="pbody"></div>
+    </div>
+  </div>
+</div>
+<script>
+var C = {
+  "Hotel":"#c9a84c",
+  "Event":"#9b6fff",
+  "Music":"#ff5f5f",
+  "Listening bar":"#c084fc",
+  "Restaurant":"#f97316",
+  "Street food":"#facc15",
+  "Bar":"#34d399",
+  "Craft beer":"#60a5fa",
+  "Coffee":"#c5853a",
+  "Shopping":"#22d3ee",
+  "Cannabis":"#86efac",
+  "Wellness":"#fb7185",
+  "Nightlife":"#ff6b9d"
+};
+
+var P = [
+  {id:0,n:"Capella Bangkok - Your Hotel",c:"Hotel",p:1,lat:13.7131,lng:100.5110,d:"Your base. Riverside, Charoenkrung. Auriga Wellness spa with sauna, steam, hot and cold pools. Every room has a private balcony or verandah. Two Michelin Keys. Cote by Mauro Colagreco restaurant on-site.",m:"https://maps.google.com/?q=Capella+Bangkok"},
+  {id:1,n:"Bangkok Pride Festival",c:"Event",p:1,lat:13.7278,lng:100.5253,d:"May 28 to June 1. Parade May 31, 2pm to 10pm on Silom Road. 4.8km route, 200,000+ expected. First back on Silom since 2022. First year after marriage equality. 500m rainbow flag. Free.",m:"https://maps.google.com/?q=Silom+Road+Bangkok"},
+  {id:2,n:"Bangkok World Music Day",c:"Event",p:0,lat:13.7298,lng:100.5492,d:"NOTE: June 13 - after your departure June 8. One Bangkok and Alliance Francaise. Free outdoor festival afternoon to midnight. 30+ artists across 5 stages. Keep in mind for next visit.",m:"https://maps.google.com/?q=One+Bangkok"},
+  {id:3,n:"Rasmee Isan Soul at Buddha and Pals",c:"Event",p:1,lat:13.7450,lng:100.5200,d:"May 28, 7pm to midnight. Thailand most celebrated mor lam artist. Soulful northeastern Thai folk music. Perfect first-night landing.",m:"https://maps.google.com/?q=Buddha+and+Pals+Bangkok"},
+  {id:4,n:"Bangkok Art Walk [after your trip]",c:"Event",p:0,lat:13.7592,lng:100.5023,d:"Through June 21. Chakrapong and Lan Luang historic districts. Art, live music, markets, independent designers. Free. Best late afternoon.",m:"https://maps.google.com/?q=Chakrapong+Road+Bangkok"},
+  {id:5,n:"Subwerk",c:"Music",p:1,lat:13.7432,lng:100.5460,d:"B-floor, President Tower Arcade, Ploenchit. Bangkok best hard techno and psy room. Cage-style dancefloor, Yamaha Pro audio, no tables. Pure rave. Fri/Sat. Check @subwerk_bkk for lineups.",m:"https://maps.google.com/?q=President+Tower+Arcade+Bangkok"},
+  {id:6,n:"Horn",c:"Music",p:1,lat:13.7278,lng:100.5248,d:"Silom. Hypnotic techno, acid, dub techno. More contemplative than Subwerk. Berghain-adjacent artists. Check @horn.bkk for lineups.",m:"https://maps.google.com/?q=Horn+Bar+Silom+Bangkok"},
+  {id:7,n:"Berlin BKK",c:"Music",p:1,lat:13.7181,lng:100.5844,d:"Ekkamai, 5F Donki Mall. Opened early 2026. Berlin underground concept. Eastern European DJ roster, raw sound. No Signal every Wednesday. Freshest room in Bangkok.",m:"https://maps.google.com/?q=Donki+Mall+Thonglor+Bangkok"},
+  {id:8,n:"BACCARAT Bangkok",c:"Music",p:0,lat:13.7338,lng:100.5693,d:"June 13: BYAS + Makasi + Cameron Glasgow. Good electronic venue. Follow-on after World Music Day.",m:"https://maps.google.com/?q=Baccarat+Bangkok"},
+  {id:9,n:"Bangkok Island Open Decks",c:"Music",p:0,lat:13.7484,lng:100.5029,d:"Every Wednesday until June 24, 6pm to midnight. Community open deck nights, live jams. Free entry.",m:"https://maps.google.com/?q=Bangkok+Island"},
+  {id:10,n:"Freaking Out the Neighborhood",c:"Listening bar",p:1,lat:13.7216,lng:100.5841,d:"Soi Sukhumvit 36, Thonglor. JBL speakers and McIntosh amp. Full albums front to back: alternative, retro, 80s. Natural wine, craft beer, yakitori. Vinyls from 6pm, headline album 9pm. Sundays you can request. Same address as Hands and Heart coffee.",m:"https://maps.google.com/?q=Freaking+Out+The+Neighborhood+Bangkok"},
+  {id:11,n:"Lennons at Rosewood Bangkok",c:"Listening bar",p:1,lat:13.7432,lng:100.5460,d:"30th floor, Rosewood Bangkok, Ploenchit. 6,000+ vinyl records. 70s studio decor. Cocktails named after 80s and 90s tracks. Guests choose records or bring their own. 1,000+ THB per head. Wed to Sun.",m:"https://maps.google.com/?q=Lennons+Rosewood+Bangkok"},
+  {id:12,n:"Club Salva",c:"Listening bar",p:1,lat:13.7181,lng:100.5844,d:"Ekkamai. Behind a red door. Dali-surrealist aesthetic. Vinyl: jazz, house, disco. Wine-forward with fermented cocktails. Same team as Modern-Day Culture next door.",m:"https://maps.google.com/?q=Club+Salva+Bangkok+Ekkamai"},
+  {id:13,n:"Alonetogether Bar",c:"Listening bar",p:0,lat:13.7278,lng:100.5720,d:"Sukhumvit 31, Phrom Phong. Live jazz 5 nights per week. Upstairs: rare vintage vinyl. Classic cocktails.",m:"https://maps.google.com/?q=Alonetogether+Bar+Bangkok"},
+  {id:14,n:"Modern-Day Culture",c:"Listening bar",p:0,lat:13.7182,lng:100.5845,d:"Ekkamai. Designer and DJ owners. Extensive vinyl. Thai herb cocktails. Next door to Club Salva.",m:"https://maps.google.com/?q=Modern+Day+Culture+Bangkok+Ekkamai"},
+  {id:15,n:"Nusara",c:"Restaurant",p:1,lat:13.7457,lng:100.4962,d:"BOOK NOW. Rooftop overlooking Wat Pho. 12-course Colorful Thai Cuisine. Thai Wagyu, crab curry, regional relishes. One Michelin Star. Most intimate fine Thai dining in the world.",m:"https://maps.google.com/?q=Nusara+Restaurant+Bangkok"},
+  {id:16,n:"Sorn",c:"Restaurant",p:1,lat:13.7216,lng:100.5841,d:"Three Michelin Stars. Entire menu dedicated to Southern Thai cooking. Sand mole crabs, fresh yellow curry. Book months ahead.",m:"https://maps.google.com/?q=Sorn+Restaurant+Bangkok"},
+  {id:17,n:"POTONG",c:"Restaurant",p:1,lat:13.7394,lng:100.5126,d:"Chinatown. 120-year-old 5-story shophouse, 5-generation Thai-Chinese family. Progressive Thai-Chinese tasting menu. Opium cocktail bar upstairs. Do both in one night.",m:"https://maps.google.com/?q=Restaurant+POTONG+Bangkok"},
+  {id:18,n:"Charmgang",c:"Restaurant",p:1,lat:13.7278,lng:100.5253,d:"Silom. Young creative team. Serious Thai food with genuine complexity. Where Bangkok chefs eat on days off.",m:"https://maps.google.com/?q=Charmgang+Bangkok"},
+  {id:19,n:"Le Du",c:"Restaurant",p:1,lat:13.7279,lng:100.5252,d:"Silom. One Michelin Star, World's 50 Best #15. Seasonal rotating Thai menu. Summer: khao chae and river prawn dishes. Ceiling of 20,000 test tubes.",m:"https://maps.google.com/?q=Le+Du+Restaurant+Bangkok"},
+  {id:20,n:"Jay Fai",c:"Restaurant",p:1,lat:13.7559,lng:100.5006,d:"Old Town. One Michelin Star street stall. Legendary crab omelette. Same woman, same charcoal, same ski goggles for 40+ years. Queue 30 to 60 min. 1,000+ THB.",m:"https://maps.google.com/?q=Raan+Jay+Fai+Bangkok"},
+  {id:21,n:"Baan Tepa",c:"Restaurant",p:0,lat:13.7456,lng:100.6480,d:"Ramkhamhaeng. Two Michelin Stars. Chef Tam, Asia's Best Female Chef 2025. 7-course menu in a 3-generation family villa with garden. Worth the trek.",m:"https://maps.google.com/?q=Baan+Tepa+Bangkok"},
+  {id:22,n:"Wattana Panich",c:"Street food",p:1,lat:13.7181,lng:100.5844,d:"Ekkamai, Sukhumvit 77. 50-year pot of beef noodle broth, replenished daily. Depth of flavour untranslatable. Mornings only. Cash only.",m:"https://maps.google.com/?q=Wattana+Panich+Bangkok"},
+  {id:23,n:"Thip Samai",c:"Street food",p:1,lat:13.7559,lng:100.5032,d:"Maha Chai Road. The original pad thai, wrapped in a thin egg crepe. Queue 30 to 60 min. Lunch or early evening.",m:"https://maps.google.com/?q=Thip+Samai+Bangkok"},
+  {id:24,n:"Victory Monument Boat Noodles",c:"Street food",p:1,lat:13.7718,lng:100.5388,d:"BTS Victory Monument. Whole alley of boat noodles. Tiny bowls, rich broth. Order 4 to 5 rounds. 50 to 60 THB per bowl. Afternoons best.",m:"https://maps.google.com/?q=Boat+Noodles+Victory+Monument+Bangkok"},
+  {id:25,n:"Yaowarat Chinatown Night",c:"Street food",p:1,lat:13.7394,lng:100.5100,d:"MRT Wat Mangkon. From 8pm. Fish ball noodles, grilled seafood, roasted duck. Pairs with POTONG dinner and Opium cocktails in the same neighbourhood.",m:"https://maps.google.com/?q=Yaowarat+Road+Bangkok"},
+  {id:26,n:"Som Tam Jay So",c:"Street food",p:0,lat:13.7718,lng:100.5388,d:"Victory Monument. Isaan papaya salad. Fermented crab version. Properly northeastern Thai, unadjusted spice.",m:"https://maps.google.com/?q=Som+Tam+Jay+So+Bangkok"},
+  {id:27,n:"Go-Ang Pratunam",c:"Street food",p:0,lat:13.7536,lng:100.5398,d:"Pratunam. Decades-old khao man gai (poached chicken rice). Classic Bangkok lunch.",m:"https://maps.google.com/?q=Go+Ang+Pratunam+Bangkok"},
+  {id:28,n:"Song Wat Road Coffee Crawl",c:"Street food",p:0,lat:13.7380,lng:100.5100,d:"Historic Chinatown street. Restored 100-year-old shophouses. Koff and Bun, Bliss and Blend. Good afternoon before Chinatown dinner.",m:"https://maps.google.com/?q=Song+Wat+Road+Bangkok"},
+  {id:29,n:"Dry Wave Cocktail Studio",c:"Bar",p:1,lat:13.7278,lng:100.5254,d:"Best Bar in Bangkok and Thailand 2025. No.5 Asia's 50 Best. Small, intimate, book ahead. Conceptual seasonal menu. Where Bangkok bartenders drink on nights off.",m:"https://maps.google.com/?q=Dry+Wave+Cocktail+Studio+Bangkok"},
+  {id:30,n:"Bar Us",c:"Bar",p:1,lat:13.7280,lng:100.5255,d:"No.4 Asia's 50 Best, No.15 World's 50 Best 2025. Thai-ingredient forward cocktails. Most decorated bar in Southeast Asia.",m:"https://maps.google.com/?q=Bar+Us+Bangkok"},
+  {id:31,n:"Opium",c:"Bar",p:1,lat:13.7394,lng:100.5127,d:"Above POTONG, Chinatown. Bar of Year 2023 and 2024. Liquid surreality seasonal menu. POTONG dinner then Opium upstairs is the perfect night.",m:"https://maps.google.com/?q=Opium+Bar+Bangkok"},
+  {id:32,n:"Vesper",c:"Bar",p:1,lat:13.7279,lng:100.5253,d:"Silom. Asia's 50 Best regular. Best martini in Southeast Asia. Classic feel, great pre-dinner.",m:"https://maps.google.com/?q=Vesper+Cocktail+Bar+Bangkok"},
+  {id:33,n:"Teens of Thailand",c:"Bar",p:1,lat:13.7400,lng:100.5130,d:"Soi Nana, Chinatown. Kratom cocktails, gin-forward, Thai posters on cement walls, lo-fi hip hop. Grungy and excellent.",m:"https://maps.google.com/?q=Teens+of+Thailand+Soi+Nana+Bangkok"},
+  {id:34,n:"Swirl Natural Wine Bar",c:"Bar",p:1,lat:13.7216,lng:100.5840,d:"Near Thonglor. Boutique importer Riesling and Co. German, Beaujolais, Rhone natural wines. Japanese-inspired small bites. Your natural wine base in Bangkok.",m:"https://maps.google.com/?q=Swirl+Wine+Bar+Bangkok"},
+  {id:35,n:"BKK Social Club",c:"Bar",p:0,lat:13.7270,lng:100.5477,d:"Four Seasons Bangkok. No.49 World's 50 Best 2025. World-class cocktails in a beautiful setting.",m:"https://maps.google.com/?q=BKK+Social+Club+Four+Seasons+Bangkok"},
+  {id:36,n:"Duke of Beerington",c:"Craft beer",p:1,lat:13.7216,lng:100.5845,d:"Thong Lo BTS. 100-strong craft beer list updating almost daily. Rarest bottles in Bangkok.",m:"https://maps.google.com/?q=Duke+of+Beerington+Bangkok"},
+  {id:37,n:"Craft",c:"Craft beer",p:1,lat:13.7338,lng:100.5601,d:"Sukhumvit Soi 23. 40 taps, bottles from 20+ countries. Live music and DJs weekends. Most social craft beer bar in the city.",m:"https://maps.google.com/?q=Craft+Beer+Bar+Sukhumvit+23+Bangkok"},
+  {id:38,n:"Two Palms Taproom",c:"Craft beer",p:1,lat:13.7592,lng:100.5023,d:"Phra Sumen Road, Old Town. 200-year-old colonial building by a canal. Exclusively local Thai craft beer. SpaceCraft, Vana, Sunrise, Fishbridge. Best setting of any beer bar in Bangkok.",m:"https://maps.google.com/?q=Two+Palms+Taproom+Bangkok"},
+  {id:39,n:"Mahatun Taproom",c:"Craft beer",p:0,lat:13.7438,lng:100.5461,d:"Inside Mahatun Plaza, BTS Ploenchit. Cult taproom. Hop bombs, pastry stouts, wild ales.",m:"https://maps.google.com/?q=Mahatun+Plaza+Bangkok"},
+  {id:40,n:"Hands and Heart",c:"Coffee",p:1,lat:13.7182,lng:100.5843,d:"Ekkamai back alley, same address as Freaking Out the Neighborhood. Living-room feel. Light-roast focus. Curated vinyl and design objects. Hit both in one visit.",m:"https://maps.google.com/?q=Hands+and+Heart+Coffee+Bangkok"},
+  {id:41,n:"Onibus Coffee",c:"Coffee",p:1,lat:13.7218,lng:100.5842,d:"Japanese roaster. Light-roast beans from Yakumo, Japan. Clean precise pour-overs. Locations: Thonglor and One Bangkok.",m:"https://maps.google.com/?q=Onibus+Coffee+Bangkok"},
+  {id:42,n:"Rocket Coffeebar",c:"Coffee",p:0,lat:13.7279,lng:100.5254,d:"Sathorn Soi 12 and Sukhumvit Soi 11. Third-wave pioneer. Strong pour-overs. Good for a working morning.",m:"https://maps.google.com/?q=Rocket+Coffeebar+Bangkok"},
+  {id:43,n:"Brave Roasters",c:"Coffee",p:0,lat:13.7394,lng:100.5127,d:"Charoenkrung. Ethiopian pour-over signature. Good morning before browsing the neighbourhood.",m:"https://maps.google.com/?q=Brave+Roasters+Bangkok"},
+  {id:44,n:"Truffle Bangkok",c:"Shopping",p:1,lat:13.7216,lng:100.5842,d:"Thonglor and Ekkamai. Needles, Engineered Garments, Wild Things, And Wander. Closest to a Tokyo select shop in Bangkok.",m:"https://maps.google.com/?q=Truffle+Bangkok"},
+  {id:45,n:"Onion Clothier Ekkamai",c:"Shopping",p:1,lat:13.7181,lng:100.5843,d:"Ekkamai Soi 12. Saturdays Surf NYC, Beton x Cire, Shoes Like Pottery, NYC vintage, Shuttle Notes Japan shirts.",m:"https://maps.google.com/?q=Onion+Ekkamai+Bangkok"},
+  {id:46,n:"Central Embassy",c:"Shopping",p:1,lat:13.7438,lng:100.5462,d:"Ploenchit. Niche fragrance: Xerjoff, Le Labo, Byredo, Creed, Kilian. Patek Philippe authorized dealer. Tourist tax refund.",m:"https://maps.google.com/?q=Central+Embassy+Bangkok"},
+  {id:47,n:"Chatuchak Weekend Market",c:"Shopping",p:1,lat:13.7996,lng:100.5508,d:"Sat and Sun only. Go 8am, leave by noon. Sections 1, 26, 27: vintage Thai ceramics, lacquerware, Buddhist objects, textiles, vinyl records.",m:"https://maps.google.com/?q=Chatuchak+Weekend+Market+Bangkok"},
+  {id:48,n:"River City Bangkok",c:"Shopping",p:0,lat:13.7370,lng:100.5100,d:"Charoenkrung. 4 floors of antiques, Asian art, Thai silk, vintage objects. Air-conditioned.",m:"https://maps.google.com/?q=River+City+Bangkok"},
+  {id:49,n:"Silom Grey Market Watches",c:"Shopping",p:0,lat:13.7278,lng:100.5252,d:"Jewelry Trade Center, Silom Road. Pre-owned NOMOS, secondary Patek. Below-Singapore pricing. Know what you want before going in.",m:"https://maps.google.com/?q=Jewelry+Trade+Center+Silom+Bangkok"},
+  {id:50,n:"Gaysorn Village Fragrance",c:"Shopping",p:0,lat:13.7438,lng:100.5393,d:"Ploenchit. Frederic Malle, Diptyque, Kilian. Less crowded than Central Embassy.",m:"https://maps.google.com/?q=Gaysorn+Village+Bangkok"},
+  {id:51,n:"Dr Green Clinic and Dispensary",c:"Cannabis",p:1,lat:13.7338,lng:100.5601,d:"Asok BTS. OPEN 24/7. Two doctors on-site, FREE PT 33 consultation, buy same visit. First stop on arrival. English-speaking. Your one-stop for prescription and top-shelf flower.",m:"https://maps.google.com/?q=Dr+Green+Cannabis+Bangkok+Asok"},
+  {id:52,n:"Kush House",c:"Cannabis",p:1,lat:13.7216,lng:100.5842,d:"Phrom Phong, Sukhumvit 24. All flower has COA. GACP-certified OG Farms Chiang Mai. Back lounge for on-site use. Best for caryophyllene-forward top shelf: Gelato, Wedding Cake, Runtz. Staff know terpenes.",m:"https://maps.google.com/?q=Kush+House+Bangkok"},
+  {id:53,n:"Revana Cafe",c:"Cannabis",p:1,lat:13.7279,lng:100.5252,d:"Silom. Farm-to-counter, grows and sells in same building. Medical mindset. Best for Thai craft single-origin. Staff take time explaining profiles.",m:"https://maps.google.com/?q=Revana+Cafe+Bangkok+Silom"},
+  {id:54,n:"Stash BKK",c:"Cannabis",p:0,lat:13.7182,lng:100.5845,d:"4 locations: Ekkamai (24/7), Ari (24/7), Chinatown rooftop (8am to 2am), On Nut (24/7). 40+ strains. Also sells legal kratom.",m:"https://maps.google.com/?q=Stash+BKK+Ekkamai+Bangkok"},
+  {id:55,n:"Exotic Dispensary",c:"Cannabis",p:0,lat:13.7340,lng:100.5602,d:"Curated top-tier selection. Comfortable lounge. Knowledgeable staff.",m:"https://maps.google.com/?q=Exotic+Dispensary+Bangkok"},
+  {id:57,n:"Four Twenty Dispensary",c:"Cannabis",p:1,lat:13.7216,lng:100.5841,d:"Thonglor and Asoke locations. Open daily 10am to 1am. Modern interior. Top-shelf flower: Zkittlez x Gelato, Wedding Cake, Runtz. 4.9 stars Google. PT 33 required, no on-site prescription service.",m:"https://maps.google.com/?q=Four+Twenty+Dispensary+Bangkok+Thonglor"},
+  {id:58,n:"High Thai Club",c:"Cannabis",p:1,lat:13.7340,lng:100.5603,d:"Sukhumvit near Asok. GACP-certified lab-tested flower. On-site licensed doctor for PT 33 prescriptions — no need to go elsewhere. Rooftop lounge and cocktail bar attached.",m:"https://maps.google.com/?q=High+Thai+Club+Bangkok+Sukhumvit"},
+  {id:59,n:"Cannabeast 39",c:"Cannabis",p:0,lat:13.7278,lng:100.5720,d:"189/1 Soi Sukhumvit 39, Phrom Phong. Industrial-biophilic design. Top-shelf strains from Ten Co and Doja. On-site smoking lounge. 450 to 1,000 THB per gram. PT 33 required, bring your own.",m:"https://maps.google.com/?q=Cannabeast+39+Sukhumvit+Bangkok"},
+  {id:56,n:"Aman Spa and Wellness",c:"Wellness",p:1,lat:13.7412,lng:100.5474,d:"1,500 sqm. Banya sauna, steam, hot and cold plunge pools, cryotherapy, IV lounge, Technogym. Best wellness facility in Bangkok. Open to non-guests by appointment.",m:"https://maps.google.com/?q=Aman+Nai+Lert+Bangkok+Spa"},
+  {id:60,n:"Daisy Dream",c:"Nightlife",p:1,lat:13.7278,lng:100.5693,d:"Soi Sukhumvit 33, Phrom Phong. Bangkok original nuru and soapy massage since 2019. 1900s Shanghai interior, premium Japanese nuru gel, air mattresses. 25 to 40 girls at peak hours. VIP jacuzzi rooms. From 2,000 THB. Walk-in or book on Line.",m:"https://maps.google.com/?q=Daisy+Dream+Nuru+Massage+Bangkok"},
+  {id:61,n:"Hakumi Nuru Massage",c:"Nightlife",p:1,lat:13.7278,lng:100.5710,d:"4/19 Soi Sukhumvit 33. Authentic Japanese nuru technique. Premium gel, genuine mattresses, VIP jacuzzi rooms. 5 min from Phrom Phong BTS. Modern and discreet. 3,200 THB for 40 min. Book ahead, popular. Daily 10am to midnight.",m:"https://maps.google.com/?q=Hakumi+Nuru+Massage+Bangkok+Sukhumvit+33"},
+  {id:62,n:"Doki Doki Nuru Massage",c:"Nightlife",p:0,lat:13.7338,lng:100.5640,d:"3/25 Sukhumvit 31, Phrom Phong area. Authentic nuru experience. Book in advance online for popular therapists. Walk-ins also welcome.",m:"https://maps.google.com/?q=Doki+Doki+Nuru+Massage+Bangkok"},
+  {id:63,n:"Billboard",c:"Nightlife",p:1,lat:13.7400,lng:100.5566,d:"Nana Plaza, top floor. Undisputed heavyweight of Nana Plaza in 2026. Super-Gogo format, high-production LED shows. The reference point for Nana nightlife. Daily 7pm to 3am.",m:"https://maps.google.com/?q=Billboard+Gogo+Bar+Nana+Plaza+Bangkok"},
+  {id:64,n:"Rainbow 5",c:"Nightlife",p:1,lat:13.7400,lng:100.5570,d:"Nana Plaza. One of the biggest and busiest bars in the complex. Mixed western and Japanese crowd. Dazzling shows. Daily 7pm to 3am.",m:"https://maps.google.com/?q=Rainbow+5+Nana+Plaza+Bangkok"},
+  {id:65,n:"Dollhouse",c:"Nightlife",p:1,lat:13.7338,lng:100.5610,d:"Soi Cowboy, mid-street. Full nudity upstairs. One of Soi Cowboy's best. 2025 cyberpunk-noir renovation. Beer 160 to 200 THB. Daily from 7pm.",m:"https://maps.google.com/?q=Dollhouse+Gogo+Bar+Soi+Cowboy+Bangkok"},
+  {id:66,n:"Bada Bing",c:"Nightlife",p:1,lat:13.7278,lng:100.5260,d:"Patpong 2, Silom. Jewel of Patpong, renovated and better selection than ever. Less crowded than Cowboy or Nana, less pressure, more laid-back. Daily 8pm to 2am.",m:"https://maps.google.com/?q=Bada+Bing+Patpong+Bangkok"}
+];
+
+var PRACTICAL = [
+  {t:"Payment",l:["<b>Cash for</b> street food, markets, cannabis. Small bills (20 to 50 THB)","ATMs everywhere, 220 THB foreign fee","Credit cards at hotels, malls, restaurants","QR / PromptPay at newer spots"]},
+  {t:"Tipping",l:["<b>Street food:</b> round up, not obligatory","<b>Restaurants:</b> 50 to 100 THB casual, 5 to 10% fine dining","<b>Massage:</b> 50 to 100 THB min","<b>Hotels:</b> 20 to 50 THB bags/room service","<b>Bars:</b> 50 THB per round appreciated"]},
+  {t:"Getting Around",l:["<b>Grab</b> is default. Reliable, English app","<b>Bolt</b> often cheaper, have both","<b>BTS:</b> Sukhumvit, Silom, Ploenchit, Ekkamai, Thonglor","<b>MRT:</b> Chinatown, Lumpini, Chatuchak","Never take taxis without meters"]},
+  {t:"Cannabis Rules",l:["Get PT 33 at Dr Green first. Free, 24/7","<b>Always carry PT 33 + passport</b> when holding flower","Do NOT buy from street touts","Consume in private or on-site lounges only","No public smoking. 5,000 THB fine"]},
+  {t:"Safety",l:["Bangkok is generally very safe","Petty theft at tourist spots, keep bag front-facing","<b>Hospital:</b> Bangkok Hospital or Bumrungrad","Tap water not safe, buy bottled"]},
+  {t:"Weather",l:["33 to 36 degrees C, humid, afternoon rain showers","Light linen or technical fabric","Sunscreen SPF50 + light rain layer","Temples: cover knees and shoulders"]},
+  {t:"Useful Thai",l:["<b>Sawadee khrap</b> - hello","<b>Khob khun khrap</b> - thank you","<b>Phet nit noi</b> - a little spicy","<b>Tao rai?</b> - how much?"]},
+  {t:"Apps",l:["<b>Grab</b> - transport + delivery","<b>Bolt</b> - cheaper rides","VPN for Chinese streaming (ExpressVPN)"]},
+  {t:"Timing",l:["<b>Street food:</b> 11:30am to 1:30pm and 6pm to midnight","<b>Chatuchak:</b> 8am, leave by noon","<b>Clubs:</b> do not arrive before midnight","<b>Book now:</b> Nusara + Sorn take weeks"]}
+];
+
+var filter="All", query="", sel=null, pOpen=false;
+var gmap, markers=[], infoWindow;
+
+function initMap() {
+  gmap = new google.maps.Map(document.getElementById("map"), {
+    center:{lat:13.735,lng:100.535},
+    zoom:13,
+    mapTypeControl:false,
+    fullscreenControl:false,
+    streetViewControl:false,
+    styles:[
+      {featureType:"poi",elementType:"labels",stylers:[{visibility:"off"}]},
+      {featureType:"transit",elementType:"labels.icon",stylers:[{visibility:"off"}]}
+    ]
+  });
+  infoWindow = new google.maps.InfoWindow();
+  P.forEach(function(p) {
+    var col = C[p.c] || "#888";
+    var isHotel = p.c === "Hotel";
+    var scale = isHotel ? 12 : (p.p ? 7 : 5);
+    var icon = isHotel ? {
+      path:"M -1,-1 L 1,-1 L 1,1 L -1,1 Z",
+      fillColor:col, fillOpacity:1, strokeColor:"#fff", strokeWeight:2.5, scale:scale
+    } : {
+      path:google.maps.SymbolPath.CIRCLE,
+      fillColor:col, fillOpacity:1, strokeColor:"#fff", strokeWeight:2, scale:scale
+    };
+    var mk = new google.maps.Marker({
+      position:{lat:p.lat,lng:p.lng}, map:gmap, icon:icon, title:p.n,
+      zIndex: isHotel ? 999 : (p.p ? 10 : 1)
+    });
+    mk.addListener("click", function() {
+      sel = p.id; render();
+      infoWindow.setContent(
+        "<div class='gpopup'>" +
+        "<div class='pname'>" + p.n + "</div>" +
+        "<div class='pcat' style='color:" + col + "'>" + p.c + (p.p && !isHotel ? " &bull; &#9733;" : "") + "</div>" +
+        "<div class='pdesc'>" + p.d + "</div>" +
+        "<a class='plink' href='" + p.m + "' target='_blank'>&#8599; Open in Google Maps</a>" +
+        "</div>"
+      );
+      infoWindow.open(gmap, mk);
+      var card = document.getElementById("c"+p.id);
+      if (card) card.scrollIntoView({behavior:"smooth",block:"nearest"});
+    });
+    markers.push({id:p.id, marker:mk});
+  });
+  buildFilters();
+  render();
+}
+
+function updateMarkers() {
+  var ids = {};
+  getList().forEach(function(p){ ids[String(p.id)]=true; });
+  markers.forEach(function(m) {
+    var place = null;
+    P.forEach(function(p){ if(p.id===m.id) place=p; });
+    var show = place && (place.c==="Hotel" || ids[String(m.id)]);
+    m.marker.setVisible(!!show);
+  });
+}
+
+function buildFilters() {
+  var el = document.getElementById("filters");
+  el.innerHTML = "";
+  var cats = ["All"].concat(Object.keys(C));
+  cats.forEach(function(cat) {
+    var b = document.createElement("button");
+    b.className = "fb" + (filter===cat ? " on" : "");
+    if (filter !== cat && C[cat]) {
+      b.style.borderColor = C[cat] + "88";
+      b.style.color = C[cat];
+    }
+    b.textContent = cat;
+    b.onclick = function(){ filter=cat; buildFilters(); render(); };
+    el.appendChild(b);
+  });
+}
+
+document.getElementById("q").addEventListener("input", function(e) {
+  query = e.target.value.toLowerCase().trim();
+  render();
+});
+
+function getList() {
+  return P.filter(function(p) {
+    return (filter==="All" || p.c===filter) &&
+      (!query || p.n.toLowerCase().indexOf(query)>=0 || p.d.toLowerCase().indexOf(query)>=0);
+  });
+}
+
+function render() {
+  var list = getList();
+  var sorted = list.slice().sort(function(a,b) {
+    if (a.c==="Hotel") return -1;
+    if (b.c==="Hotel") return 1;
+    return (b.p-a.p) || a.n.localeCompare(b.n);
+  });
+  updateMarkers();
+  document.getElementById("sub").textContent = list.length + " places";
+  document.getElementById("meta").textContent = list.length + " places \u00b7 " + list.filter(function(p){return p.p;}).length + " priority";
+  var el = document.getElementById("cards");
+  if (!sorted.length) { el.innerHTML="<div class='empty'>No places found.</div>"; return; }
+  el.innerHTML = sorted.map(function(p) {
+    var col = C[p.c] || "#888";
+    var isHotel = p.c==="Hotel";
+    if (isHotel) {
+      return "<div class='card hotel-card" + (sel===p.id?" sel":"") + "' id='c"+p.id+"' onclick='pick("+p.id+","+p.lat+","+p.lng+")'>" +
+        "<div class='crow'><div class='cname'>"+p.n+"</div><div class='must'>&#127968; Your Hotel</div></div>" +
+        "<div class='hotel-badge'>&#9733; Capella Bangkok</div>" +
+        "<div class='cdesc'>"+p.d+"</div>" +
+        "<a class='cgmap' href='"+p.m+"' target='_blank' onclick='event.stopPropagation()'>&#8599; Google Maps</a></div>";
+    }
+    return "<div class='card"+(p.p?" p":"")+(sel===p.id?" sel":"")+"' id='c"+p.id+"' onclick='pick("+p.id+","+p.lat+","+p.lng+")'>" +
+      "<div class='crow'><div class='cname'>"+p.n+"</div>"+(p.p?"<div class='must'>&#9733; must</div>":"")+"</div>" +
+      "<span class='ctag' style='background:"+col+"20;color:"+col+";border:1px solid "+col+"55'>"+p.c+"</span>" +
+      "<div class='cdesc'>"+p.d+"</div>" +
+      "<a class='cgmap' href='"+p.m+"' target='_blank' onclick='event.stopPropagation()'>&#8599; Google Maps</a></div>";
+  }).join("");
+}
+
+function pick(id,lat,lng) {
+  sel=id; render();
+  gmap.panTo({lat:lat,lng:lng});
+  gmap.setZoom(16);
+  markers.forEach(function(m){ if(m.id===id) google.maps.event.trigger(m.marker,"click"); });
+}
+
+document.getElementById("pbody").innerHTML = PRACTICAL.map(function(s) {
+  return "<div class='pi'><h4>"+s.t+"</h4><ul>"+s.l.map(function(i){return "<li>"+i+"</li>";}).join("")+"</ul></div>";
+}).join("");
+
+function toggleP() {
+  pOpen=!pOpen;
+  document.getElementById("pbody").className = "pbody"+(pOpen?" open":"");
+  document.getElementById("parr").innerHTML = pOpen ? "&#9660;" : "&#9658;";
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCgP7YdszZolgecnptiLqBrnZ-vu3trtIg&callback=initMap&language=en&region=US" async defer></script>
+</body>
+</html>
